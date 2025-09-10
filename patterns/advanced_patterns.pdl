@@ -1,0 +1,244 @@
+// ============================================
+// ADVANCED PDL PATTERNS FOR ARITHMETIC OPERATIONS
+// ============================================
+
+// -------------------- SUBTRACTION PATTERNS --------------------
+
+// Pattern: x - 0 -> x
+pdl.pattern @sub_zero : benefit(2) {
+  %t = pdl.type
+  %x = pdl.operand
+  %c0_attr = pdl.attribute = 0.0 : f64
+  %c0_op = pdl.operation "arith.constant" {"value" = %c0_attr} -> (%t : !pdl.type)
+  %c0 = pdl.result 0 of %c0_op
+  %sub = pdl.operation "arith.subf" (%x, %c0 : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %sub {
+    pdl.replace %sub with (%x : !pdl.value)
+  }
+}
+
+// Pattern: 0 - x -> -x (negation)
+pdl.pattern @zero_sub : benefit(3) {
+  %t = pdl.type
+  %x = pdl.operand
+  %c0_attr = pdl.attribute = 0.0 : f64
+  %c0_op = pdl.operation "arith.constant" {"value" = %c0_attr} -> (%t : !pdl.type)
+  %c0 = pdl.result 0 of %c0_op
+  %sub = pdl.operation "arith.subf" (%c0, %x : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %sub {
+    %neg = pdl.operation "arith.negf" (%x : !pdl.value) -> (%t : !pdl.type)
+    %neg_res = pdl.result 0 of %neg
+    pdl.replace %sub with (%neg_res : !pdl.value)
+  }
+}
+
+// -------------------- MULTIPLICATION PATTERNS --------------------
+
+// Pattern: x * 2 -> x + x
+pdl.pattern @mul_two_to_add : benefit(2) {
+  %t = pdl.type
+  %x = pdl.operand
+  %c2_attr = pdl.attribute = 2.0 : f64
+  %c2_op = pdl.operation "arith.constant" {"value" = %c2_attr} -> (%t : !pdl.type)
+  %c2 = pdl.result 0 of %c2_op
+  %mul = pdl.operation "arith.mulf" (%x, %c2 : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %mul {
+    %add = pdl.operation "arith.addf" (%x, %x : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+    %add_res = pdl.result 0 of %add
+    pdl.replace %mul with (%add_res : !pdl.value)
+  }
+}
+
+// Pattern: x * -1 -> -x
+pdl.pattern @mul_neg_one : benefit(3) {
+  %t = pdl.type
+  %x = pdl.operand
+  %neg1_attr = pdl.attribute = -1.0 : f64
+  %neg1_op = pdl.operation "arith.constant" {"value" = %neg1_attr} -> (%t : !pdl.type)
+  %neg1 = pdl.result 0 of %neg1_op
+  %mul = pdl.operation "arith.mulf" (%x, %neg1 : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %mul {
+    %neg = pdl.operation "arith.negf" (%x : !pdl.value) -> (%t : !pdl.type)
+    %neg_res = pdl.result 0 of %neg
+    pdl.replace %mul with (%neg_res : !pdl.value)
+  }
+}
+
+// Pattern: -1 * x -> -x (commutative version)
+pdl.pattern @neg_one_mul : benefit(3) {
+  %t = pdl.type
+  %x = pdl.operand
+  %neg1_attr = pdl.attribute = -1.0 : f64
+  %neg1_op = pdl.operation "arith.constant" {"value" = %neg1_attr} -> (%t : !pdl.type)
+  %neg1 = pdl.result 0 of %neg1_op
+  %mul = pdl.operation "arith.mulf" (%neg1, %x : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %mul {
+    %neg = pdl.operation "arith.negf" (%x : !pdl.value) -> (%t : !pdl.type)
+    %neg_res = pdl.result 0 of %neg
+    pdl.replace %mul with (%neg_res : !pdl.value)
+  }
+}
+
+// -------------------- DIVISION PATTERNS --------------------
+
+// Pattern: 0 / x -> 0
+pdl.pattern @zero_div : benefit(3) {
+  %t = pdl.type
+  %x = pdl.operand
+  %c0_attr = pdl.attribute = 0.0 : f64
+  %c0_op = pdl.operation "arith.constant" {"value" = %c0_attr} -> (%t : !pdl.type)
+  %c0 = pdl.result 0 of %c0_op
+  %div = pdl.operation "arith.divf" (%c0, %x : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %div {
+    pdl.replace %div with (%c0 : !pdl.value)
+  }
+}
+
+// Pattern: x / -1 -> -x
+pdl.pattern @div_neg_one : benefit(3) {
+  %t = pdl.type
+  %x = pdl.operand
+  %neg1_attr = pdl.attribute = -1.0 : f64
+  %neg1_op = pdl.operation "arith.constant" {"value" = %neg1_attr} -> (%t : !pdl.type)
+  %neg1 = pdl.result 0 of %neg1_op
+  %div = pdl.operation "arith.divf" (%x, %neg1 : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %div {
+    %neg = pdl.operation "arith.negf" (%x : !pdl.value) -> (%t : !pdl.type)
+    %neg_res = pdl.result 0 of %neg
+    pdl.replace %div with (%neg_res : !pdl.value)
+  }
+}
+
+// -------------------- NEGATION PATTERNS --------------------
+
+// Pattern: -(-x) -> x (double negation)
+pdl.pattern @double_neg : benefit(4) {
+  %t = pdl.type
+  %x = pdl.operand
+  %neg1 = pdl.operation "arith.negf" (%x : !pdl.value) -> (%t : !pdl.type)
+  %neg1_res = pdl.result 0 of %neg1
+  %neg2 = pdl.operation "arith.negf" (%neg1_res : !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %neg2 {
+    pdl.replace %neg2 with (%x : !pdl.value)
+  }
+}
+
+// -------------------- COMPLEX PATTERNS --------------------
+
+// Pattern: (x + y) - y -> x
+pdl.pattern @add_then_sub_same : benefit(4) {
+  %t = pdl.type
+  %x = pdl.operand
+  %y = pdl.operand
+  
+  // Match x + y
+  %add = pdl.operation "arith.addf" (%x, %y : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  %add_res = pdl.result 0 of %add
+  
+  // Match (x + y) - y
+  %sub = pdl.operation "arith.subf" (%add_res, %y : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %sub {
+    pdl.replace %sub with (%x : !pdl.value)
+  }
+}
+
+// Pattern: (x - y) + y -> x
+pdl.pattern @sub_then_add_same : benefit(4) {
+  %t = pdl.type
+  %x = pdl.operand
+  %y = pdl.operand
+  
+  // Match x - y
+  %sub = pdl.operation "arith.subf" (%x, %y : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  %sub_res = pdl.result 0 of %sub
+  
+  // Match (x - y) + y
+  %add = pdl.operation "arith.addf" (%sub_res, %y : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %add {
+    pdl.replace %add with (%x : !pdl.value)
+  }
+}
+
+// Pattern: x * x -> x^2 (replace with power operation if available)
+pdl.pattern @square : benefit(2) {
+  %t = pdl.type
+  %x = pdl.operand
+  %mul = pdl.operation "arith.mulf" (%x, %x : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %mul {
+    // For now, keep as multiplication, but this shows how you could
+    // replace with a different operation if needed
+    // In real scenario, you might replace with math.powf %x, 2.0
+    pdl.replace %mul with %mul
+  }
+}
+
+// -------------------- COMPARISON PATTERNS --------------------
+
+// Pattern: x == x -> true (for comparison operations)
+pdl.pattern @cmp_eq_self : benefit(5) {
+  %t = pdl.type
+  %x = pdl.operand
+  %cmp = pdl.operation "arith.cmpf" (%x, %x : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %cmp {
+    %true_attr = pdl.attribute = 1 : i1
+    %true_op = pdl.operation "arith.constant" {"value" = %true_attr} -> (%t : !pdl.type)
+    %true_res = pdl.result 0 of %true_op
+    pdl.replace %cmp with (%true_res : !pdl.value)
+  }
+}
+
+// -------------------- INTEGER PATTERNS --------------------
+
+// Pattern: x & 0 -> 0 (bitwise AND with zero)
+pdl.pattern @and_zero : benefit(3) {
+  %t = pdl.type
+  %x = pdl.operand
+  %c0_attr = pdl.attribute = 0 : i32
+  %c0_op = pdl.operation "arith.constant" {"value" = %c0_attr} -> (%t : !pdl.type)
+  %c0 = pdl.result 0 of %c0_op
+  %and = pdl.operation "arith.andi" (%x, %c0 : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %and {
+    pdl.replace %and with (%c0 : !pdl.value)
+  }
+}
+
+// Pattern: x | -1 -> -1 (bitwise OR with all ones)
+pdl.pattern @or_all_ones : benefit(3) {
+  %t = pdl.type
+  %x = pdl.operand
+  %neg1_attr = pdl.attribute = -1 : i32
+  %neg1_op = pdl.operation "arith.constant" {"value" = %neg1_attr} -> (%t : !pdl.type)
+  %neg1 = pdl.result 0 of %neg1_op
+  %or = pdl.operation "arith.ori" (%x, %neg1 : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %or {
+    pdl.replace %or with (%neg1 : !pdl.value)
+  }
+}
+
+// Pattern: x ^ x -> 0 (XOR with self)
+pdl.pattern @xor_self : benefit(3) {
+  %t = pdl.type
+  %x = pdl.operand
+  %xor = pdl.operation "arith.xori" (%x, %x : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %xor {
+    %c0_attr = pdl.attribute = 0 : i32
+    %c0_op = pdl.operation "arith.constant" {"value" = %c0_attr} -> (%t : !pdl.type)
+    %c0 = pdl.result 0 of %c0_op
+    pdl.replace %xor with (%c0 : !pdl.value)
+  }
+}

@@ -1,0 +1,82 @@
+// Pattern 1: x + 0 -> x
+pdl.pattern @x_plus_zero : benefit(2) {
+  %t = pdl.type
+  %x = pdl.operand
+  %c0_attr = pdl.attribute = 0.0 : f64
+  %c0_op = pdl.operation "arith.constant" {"value" = %c0_attr} -> (%t : !pdl.type)
+  %c0_res = pdl.result 0 of %c0_op
+  %x_plus_zero_op = pdl.operation "arith.addf" (%x, %c0_res : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  pdl.rewrite %x_plus_zero_op {
+    pdl.replace %x_plus_zero_op with (%x : !pdl.value)
+  }
+}
+
+// Pattern 2: x - x -> 0
+pdl.pattern @x_minus_x : benefit(3) {
+  %t = pdl.type
+  %x = pdl.operand
+  %x_minus_x = pdl.operation "arith.subf" (%x, %x : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %x_minus_x {
+    %c0_attr = pdl.attribute = 0.0 : f64
+    %c0_op = pdl.operation "arith.constant" {"value" = %c0_attr} -> (%t : !pdl.type)
+    %c0_res = pdl.result 0 of %c0_op
+    pdl.replace %x_minus_x with (%c0_res : !pdl.value)
+  }
+}
+
+// Pattern 3: x / x -> 1.0
+pdl.pattern @x_div_x : benefit(3) {
+  %t = pdl.type
+  %x = pdl.operand
+  %x_div_x = pdl.operation "arith.divf" (%x, %x : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %x_div_x {
+    %c1_attr = pdl.attribute = 1.0 : f64
+    %c1_op = pdl.operation "arith.constant" {"value" = %c1_attr} -> (%t : !pdl.type)
+    %c1_res = pdl.result 0 of %c1_op
+    pdl.replace %x_div_x with (%c1_res : !pdl.value)
+  }
+}
+
+// Pattern 4: x * 0 -> 0
+pdl.pattern @x_times_zero : benefit(2) {
+  %t = pdl.type
+  %x = pdl.operand
+  %c0_attr = pdl.attribute = 0.0 : f64
+  %c0_op = pdl.operation "arith.constant" {"value" = %c0_attr} -> (%t : !pdl.type)
+  %c0_res = pdl.result 0 of %c0_op
+  %x_times_zero_op = pdl.operation "arith.mulf" (%x, %c0_res : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %x_times_zero_op {
+    pdl.replace %x_times_zero_op with (%c0_res : !pdl.value)
+  }
+}
+
+// Pattern 5: x * 1 -> x
+pdl.pattern @x_times_one : benefit(2) {
+  %t = pdl.type
+  %x = pdl.operand
+  %c1_attr = pdl.attribute = 1.0 : f64
+  %c1_op = pdl.operation "arith.constant" {"value" = %c1_attr} -> (%t : !pdl.type)
+  %c1_res = pdl.result 0 of %c1_op
+  %x_times_one_op = pdl.operation "arith.mulf" (%x, %c1_res : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %x_times_one_op {
+    pdl.replace %x_times_one_op with (%x : !pdl.value)
+  }
+}
+
+// Pattern 6: x / 1 -> x  
+pdl.pattern @x_div_one : benefit(2) {
+  %t = pdl.type
+  %x = pdl.operand
+  %c1_attr = pdl.attribute = 1.0 : f64
+  %c1_op = pdl.operation "arith.constant" {"value" = %c1_attr} -> (%t : !pdl.type)
+  %c1_res = pdl.result 0 of %c1_op
+  %x_div_one_op = pdl.operation "arith.divf" (%x, %c1_res : !pdl.value, !pdl.value) -> (%t : !pdl.type)
+  
+  pdl.rewrite %x_div_one_op {
+    pdl.replace %x_div_one_op with (%x : !pdl.value)
+  }
+}

@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv
+
+# Temporary files
+*.temp
+*.tmp
+combined_temp.mlir
+output_temp.mlir
+temp_*.mlir
+temp_*.pdl
+combined.mlir
+output.mlir
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
