@@ -23,7 +23,8 @@ mlir-pdl/
 ├── patterns/           # PDL pattern definitions
 │   ├── patterns.pdl          # Basic arithmetic patterns
 │   ├── advanced_patterns.pdl # Advanced optimization patterns
-│   └── custom_pattern.pdl    # Custom example patterns
+│   ├── custom_pattern.pdl    # Custom example patterns
+│   └── official_examples.pdl # Patterns from official xDSL docs
 ├── examples/           # MLIR test inputs
 │   ├── input.mlir            # Original test case
 │   ├── test_arith_ops.mlir  # Arithmetic operation tests
@@ -33,6 +34,7 @@ mlir-pdl/
 │   └── test_pdl.py          # Interactive Python testing tool
 └── docs/              # Documentation
     ├── PDL_TUTORIAL.md      # Complete PDL guide
+    ├── PDL_REFERENCE.md     # PDL dialect reference
     ├── EXERCISES.md         # Practice exercises with solutions
     └── README.md            # Original tutorial notes
 ```
