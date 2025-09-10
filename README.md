@@ -9,10 +9,16 @@ A comprehensive learning framework for PDL (Pattern Description Language) patter
 git clone https://github.com/jerryzhao173985/mlir-pdl.git
 cd mlir-pdl
 
-# Test a simple pattern
+# Method 1: Apply patterns from separate files (RECOMMENDED)
+xdsl-opt examples/separate_input.mlir -p 'apply-pdl{pdl_file="patterns/separate_patterns.mlir"}' -o output.mlir
+
+# Method 2: Use the helper script
+./scripts/apply_patterns.sh examples/separate_input.mlir patterns/separate_patterns.mlir
+
+# Method 3: Combined file approach (for testing)
 ./scripts/run_pdl.sh examples/input.mlir patterns/patterns.pdl
 
-# Run interactive testing tool
+# Interactive testing tool
 python scripts/test_pdl.py
 ```
 
