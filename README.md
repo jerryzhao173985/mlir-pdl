@@ -25,25 +25,29 @@ mlir-pdl/
 │   ├── advanced_patterns.pdl # Advanced optimization patterns
 │   ├── custom_pattern.pdl    # Custom example patterns
 │   └── official_examples.pdl # Patterns from official xDSL docs
-├── examples/           # MLIR test inputs
+├── examples/           # MLIR test inputs and examples
 │   ├── input.mlir            # Original test case
 │   ├── test_arith_ops.mlir  # Arithmetic operation tests
-│   └── test_examples.mlir   # Various test scenarios
+│   ├── test_examples.mlir   # Various test scenarios
+│   └── pdl_interp_examples.mlir # PDL Interpreter examples
 ├── scripts/            # Tools and utilities
 │   ├── run_pdl.sh           # Shell script for pattern application
 │   └── test_pdl.py          # Interactive Python testing tool
 └── docs/              # Documentation
-    ├── PDL_TUTORIAL.md      # Complete PDL guide
-    ├── PDL_REFERENCE.md     # PDL dialect reference
-    ├── EXERCISES.md         # Practice exercises with solutions
-    └── README.md            # Original tutorial notes
+    ├── PDL_TUTORIAL.md          # Complete PDL guide
+    ├── PDL_REFERENCE.md         # PDL dialect reference
+    ├── PDL_INTERPRETER_ADVANCED.md # Advanced PDL Interpreter guide
+    ├── EXERCISES.md             # Practice exercises with solutions
+    └── README.md                # Original tutorial notes
 ```
 
 ## 🎯 Features
 
-- **20+ Pre-built Patterns**: Ready-to-use optimization patterns for arithmetic operations
+- **25+ Pre-built Patterns**: Ready-to-use optimization patterns for arithmetic operations
+- **PDL Interpreter Examples**: Understanding the execution engine behind PDL patterns
 - **Interactive Testing**: Python tool for experimenting with patterns
 - **Comprehensive Tutorial**: Step-by-step guide to PDL concepts
+- **Advanced Documentation**: Deep dive into PDL Interpreter dialect
 - **Practice Exercises**: 8 exercises with solutions to master PDL
 - **Test Suite**: Multiple test cases demonstrating pattern applications
 
@@ -146,8 +150,25 @@ func.func @main(%a : f64, %b : f64, %c : f64) -> f64 {
 1. **Start with the Tutorial**: Read `docs/PDL_TUTORIAL.md` for comprehensive PDL concepts
 2. **Run Examples**: Use `./scripts/run_pdl.sh` to see patterns in action
 3. **Practice Exercises**: Complete exercises in `docs/EXERCISES.md`
-4. **Write Custom Patterns**: Create your own patterns and test them
-5. **Interactive Exploration**: Use `test_pdl.py` for experimentation
+4. **Advanced Study**: Learn PDL Interpreter in `docs/PDL_INTERPRETER_ADVANCED.md`
+5. **Write Custom Patterns**: Create your own patterns and test them
+6. **Interactive Exploration**: Use `test_pdl.py` for experimentation
+
+## 🔥 Advanced: PDL Interpreter
+
+PDL Interpreter (`pdl_interp`) is the **intermediate representation** that PDL patterns compile to:
+
+- **Execution Engine**: PDL patterns → PDL Interpreter IR → Pattern execution
+- **Fine-grained Control**: Direct manipulation of matching and rewriting
+- **Examples**: See `examples/pdl_interp_examples.mlir` for detailed patterns
+
+Key PDL Interpreter operations:
+- `pdl_interp.check_operation_name` - Verify operation types
+- `pdl_interp.get_operand/result` - Extract values
+- `pdl_interp.create_operation` - Build new operations
+- `pdl_interp.replace` - Transform IR
+
+Learn more in the [PDL Interpreter Guide](docs/PDL_INTERPRETER_ADVANCED.md)
 
 ## 📝 Writing Your Own Patterns
 
